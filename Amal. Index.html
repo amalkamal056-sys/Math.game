@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>من سيربح المليون</title>
+<style>
+:root{--navy:#1F3864;--gold:#C9A227;--light:#D6E4F0;--bg:#f3f6fb;--card:#ffffff;--text:#1b2233;--ok:#2e8b57;--bad:#c0392b;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a2e;--card:#16253f;--text:#e8eef8;--light:#24375c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1a2e;--card:#16253f;--text:#e8eef8;--light:#24375c;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:18px;line-height:1.6}
+header{position:sticky;top:0;z-index:5;background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 10px;border-bottom:4px solid var(--gold)}
+header .full{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;font-size:16px}
+header h1{margin:0 0 6px;font-size:24px;color:var(--gold)}
+header .compact{display:none;font-size:16px;justify-content:space-between;gap:8px}
+header.small .full{display:none}
+header.small .compact{display:flex}
+header.small h1{margin:0;font-size:18px}
+.spacer{height:14px;padding-bottom:env(safe-area-inset-bottom,0px)}
+main{padding:14px;max-width:1200px;margin:0 auto}
+.screen{display:none}
+.screen.on{display:block}
+.card{background:var(--card);border-radius:14px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.08);margin-bottom:14px}
+#start{max-width:480px;margin:30px auto;text-align:center}
+#start h2{color:var(--navy);margin-top:0}
+input[type=text]{width:100%;font:inherit;padding:14px;border:2px solid var(--light);border-radius:10px;background:var(--card);color:var(--text);margin:12px 0}
+.btn{font:inherit;font-weight:bold;border:none;border-radius:12px;padding:14px 18px;cursor:pointer;background:var(--navy);color:#fff;min-height:52px;width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.gold{background:var(--gold);color:var(--navy)}
+.btn.alt{background:var(--light);color:var(--navy)}
+.game{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:900px){.game{grid-template-columns:1fr 280px}}
+.qnum{color:var(--navy);font-weight:bold;margin:0 0 8px}
+.qbox{font-size:24px;font-weight:bold;line-height:2;min-height:110px;display:flex;align-items:center;justify-content:center;text-align:center;background:var(--light);border-radius:12px;padding:18px}
+.opts{display:grid;gap:12px;margin-top:14px}
+.opt{font:inherit;font-size:20px;background:var(--card);color:var(--text);border:2px solid var(--navy);border-radius:12px;padding:16px;min-height:60px;text-align:right;cursor:pointer;width:100%}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.bad{background:var(--bad);border-color:var(--bad);color:#fff}
+.opt.hide{visibility:hidden}
+.help{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.help .btn{font-size:15px;min-height:48px;padding:10px}
+.help .btn:disabled{background:#999}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.spk{font-size:14px;color:var(--navy);min-height:22px;margin-top:6px}
+.msg{font-weight:bold;min-height:28px;margin-top:10px;text-align:center}
+.aud{margin-top:12px;display:none}
+.bar{display:flex;align-items:center;gap:8px;margin:6px 0}
+.bar .lab{width:28px;font-weight:bold}
+.bar .track{flex:1;background:var(--light);border-radius:8px;height:22px;overflow:hidden}
+.bar .fill{height:100%;background:var(--gold)}
+.bar .pct{width:50px;font-size:14px}
+ol.ladder{list-style:none;margin:0;padding:0;display:flex;flex-direction:column-reverse;gap:4px}
+ol.ladder li{padding:6px 10px;border-radius:8px;background:var(--card);border:1px solid var(--light);font-size:15px}
+ol.ladder li.pass{background:var(--light);color:var(--navy);font-weight:bold}
+ol.ladder li.cur{background:var(--gold);color:var(--navy);font-weight:bold;border-color:var(--gold)}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;direction:ltr;line-height:1.15;margin:0 2px}
+.fr>span:first-child{border-bottom:2px solid currentColor;padding:0 4px}
+.fr>span:last-child{padding:0 4px}
+#end{text-align:center;max-width:620px;margin:20px auto}
+#end h2{color:var(--navy)}
+.res{font-size:20px;margin:16px 0}
+#cert{background:#fffdf5;color:#1b2233;border:6px double var(--gold);border-radius:12px;padding:28px;margin:18px auto;max-width:600px;text-align:center}
+#cert h2{color:var(--navy);font-size:34px;margin:0 0 10px}
+#cert .nm{font-size:30px;font-weight:bold;color:var(--navy);margin:10px 0}
+#cert p{margin:6px 0;font-size:18px}
+.acts{display:grid;gap:10px;max-width:600px;margin:0 auto}
+@media (min-width:600px){.acts{grid-template-columns:1fr 1fr}}
+@media print{body *{visibility:hidden}#cert,#cert *{visibility:visible}#cert{position:absolute;left:0;top:0;width:100%;max-width:none;border:none}}
+</style>
+</head>
+<body>
+<header id="hdr">
+  <div class="full">
+    <h1>من سيربح المليون</h1>
+    <div>المادة: رياضيات</div>
+    <div>الدرس: ضرب عدد صحيح في كسر عادي</div>
+    <div>الصف: الخامس</div>
+    <div>اسم المعلم/ة: آمال كمال</div>
+    <div>اسم المدرسة: بنات بيت سيرا الثانوية</div>
+  </div>
+  <div class="compact"><span>من سيربح المليون</span><span id="pname"></span></div>
+</header>
+
+<main>
+<section id="start" class="screen on card">
+  <h2>من سيربح المليون</h2>
+  <p>مسابقة في ضرب عدد صحيح في كسر عادي</p>
+  <p id="jsStatus" style="color:#c0392b;font-size:14px">تنبيه: البرنامج لم يعمل في هذا المتصفح. جرّبي فتح الملف المحمّل في Safari.</p>
+  <input type="text" id="name" placeholder="اكتب اسمك هنا" maxlength="40">
+  <button class="btn gold" id="startBtn">ابدأ المسابقة</button>
+</section>
+
+<section id="game" class="screen">
+  <div class="game">
+    <div>
+      <div class="card">
+        <p class="qnum" id="qnum"></p>
+        <div class="qbox" id="qtext"></div>
+        <div class="opts" id="opts"></div>
+        <div class="msg" id="msg"></div>
+      </div>
+      <div class="card">
+        <strong>وسائل المساعدة</strong>
+        <div class="help">
+          <button class="btn" id="h5050">حذف إجابتين</button>
+          <button class="btn" id="hchange">تغيير السؤال</button>
+          <button class="btn" id="haud">مساعدة الجمهور</button>
+        </div>
+        <div class="aud" id="aud"></div>
+      </div>
+      <div class="card">
+        <div class="row">
+          <button class="btn alt" id="readBtn">اقرأ السؤال</button>
+          <button class="btn alt" id="stopBtn">إيقاف القراءة</button>
+        </div>
+        <div class="spk" id="spk"></div>
+      </div>
+    </div>
+    <aside class="card">
+      <strong>سلم الجوائز</strong>
+      <ol class="ladder" id="ladder"></ol>
+    </aside>
+  </div>
+</section>
+
+<section id="end" class="screen">
+  <div class="card">
+    <h2>انتهت المسابقة</h2>
+    <div class="res" id="res"></div>
+    <div id="cert">
+      <h2>بطل المعرفة</h2>
+      <p>يشهد بأن الطالب/ة</p>
+      <div class="nm" id="cName"></div>
+      <p>حصل/ت على نتيجة <span id="cScore"></span></p>
+      <p>وبلغ/ت المستوى <span id="cLevel"></span></p>
+      <p>المعلم/ة: آمال كمال</p>
+      <p>المدرسة: بنات بيت سيرا الثانوية</p>
+      <p>التاريخ: <span id="cDate"></span></p>
+    </div>
+    <div class="acts">
+      <button class="btn gold" id="printBtn">طباعة الشهادة</button>
+      <button class="btn alt" id="saveBtn">حفظ الشهادة كصورة</button>
+      <button class="btn" id="againBtn" style="grid-column:1/-1">مسابقة جديدة</button>
+    </div>
+  </div>
+</section>
+</main>
+<div class="spacer"></div>
+
+<script>
+document.getElementById("jsStatus").remove();
+const toAr = s => String(s).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+const fmt = s => toAr(s.replace(/\{(\d+)\/(\d+)\}/g, (m,a,b) => `<span class="fr"><span>${a}</span><span>${b}</span></span>`));
+const plain = s => s.replace(/\{(\d+)\/(\d+)\}/g, "$1 على $2");
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+const MAIN = [
+ {q:"ما ناتج 3 × {1/4}؟", a:"{3/4}", w:["{4/3}","{3/7}","{1/12}"]},
+ {q:"ما ناتج 5 × {1/2}؟", a:"{5/2}", w:["{5/10}","{7/2}","{2/5}"]},
+ {q:"أبسط صورة للناتج: 2 × {2/3}", a:"{4/3}", w:["{4/6}","{2/6}","{4/9}"]},
+ {q:"ما ناتج 6 × {1/3}؟", a:"2", w:["3","6","{6/9}"]},
+ {q:"عبّر عن الجمع المتكرر بالضرب: {2/5} + {2/5} + {2/5}", a:"3 × {2/5}", w:["2 × {3/5}","5 × {2/3}","2 × {2/5}"]},
+ {q:"ما ناتج 4 × {3/8}؟", a:"{3/2}", w:["{7/8}","{12/32}","{1/2}"]},
+ {q:"ما ناتج {1/5} × 15؟", a:"3", w:["5","10","75"]},
+ {q:"ما ناتج 3 × {5/6}؟", a:"{5/2}", w:["{15/18}","{8/6}","{5/6}"]},
+ {q:"ما ناتج 10 × {3/4}؟", a:"{15/2}", w:["{13/4}","{30/14}","{7/4}"]},
+ {q:"في صحن 12 قطعة حلوى، أكل أحمد {1/3} منها. كم قطعة أكل؟", a:"4", w:["3","36","9"]},
+ {q:"قطف مزارع 20 كيلوغراماً من البرتقال، وباع {3/5} منها. كم كيلوغراماً باع؟", a:"12", w:["15","8","60"]},
+ {q:"أكمل الفراغ: ؟ × {1/9} = {4/9}", a:"4", w:["2","9","1"]},
+ {q:"ما ناتج {2/3} × 6؟", a:"4", w:["2","9","3"]},
+ {q:"عدد الكتب 24 كتاباً، قرأت سلمى {5/6} منها. كم كتاباً قرأت؟", a:"20", w:["19","4","120"]},
+ {q:"ما ناتج 9 × {2/3} + 9 × {1/3}؟", a:"9", w:["6","18","3"]}
+];
+const SPARE = [
+ {q:"ما ناتج 6 × {1/4}؟", a:"{3/2}", w:["{6/16}","{2/3}","{10/4}"]},
+ {q:"ما ناتج 7 × {2/7}؟", a:"2", w:["14","9","{14/49}"]},
+ {q:"ما ناتج {1/6} × 12؟", a:"2", w:["6","18","72"]}
+];
+
+let pool, spare, cur, locked, correctCount, speaking = false, AC = null;
+const $ = id => document.getElementById(id);
+
+function show(id){ document.querySelectorAll(".screen").forEach(s => { s.style.display = s.id === id ? "block" : "none"; }); }
+
+
+$("startBtn").addEventListener("click", () => startGame());
+$("startBtn").addEventListener("touchend", e => { e.preventDefault(); startGame(); });
+$("name").addEventListener("keydown", e => { if (e.key === "Enter") startGame(); });
+function startGame() {
+  const n = $("name").value.trim();
+  if (!n) { $("name").style.borderColor = "#c0392b"; $("name").placeholder = "يرجى كتابة الاسم أولاً"; $("name").focus(); return; }
+  $("pname").textContent = "المتسابق: " + n;
+  $("hdr").classList.add("small");
+  pool = MAIN.slice(); spare = SPARE.slice(); cur = 0;
+  ["h5050","hchange","haud"].forEach(id => $(id).disabled = false);
+  $("aud").style.display = "none"; $("aud").innerHTML = "";
+  try { show("game"); render(); } catch (err) { show("game"); $("msg").textContent = "حدث خطأ: " + err.message; }
+};
+
+function beep(f1, f2, type){
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type; o.frequency.value = f1; g.gain.value = 0.15;
+    o.connect(g); g.connect(AC.destination); o.start();
+    o.frequency.setValueAtTime(f2, AC.currentTime + 0.15);
+    o.stop(AC.currentTime + 0.35);
+  } catch(e){}
+}
+
+function render(){
+  locked = false;
+  const item = pool[cur];
+  $("qnum").textContent = toAr("السؤال " + (cur + 1) + " من 15");
+  $("qtext").innerHTML = fmt(item.q);
+  $("msg").textContent = "";
+  const box = $("opts"); box.innerHTML = "";
+  shuffle([item.a, ...item.w]).forEach(t => {
+    const b = document.createElement("button");
+    b.className = "opt"; b.dataset.v = t; b.innerHTML = fmt(t);
+    b.onclick = () => answer(t, b);
+    box.appendChild(b);
+  });
+  const lad = $("ladder"); lad.innerHTML = "";
+  for (let i = 14; i >= 0; i--) {
+    const li = document.createElement("li");
+    li.textContent = "السؤال " + toAr(i + 1);
+    if (i === cur) li.className = "cur"; else if (i < cur) li.className = "pass";
+    lad.appendChild(li);
+  }
+  stopSpeech();
+}
+
+function answer(t, b){
+  if (locked) return;
+  locked = true;
+  const item = pool[cur];
+  [...$("opts").children].forEach(x => x.disabled = true);
+  if (t === item.a) {
+    b.classList.add("ok"); $("msg").textContent = "إجابة صحيحة";
+    beep(660, 990, "sine");
+    setTimeout(() => {
+      if (cur === 14) endGame(true);
+      else { cur++; render(); }
+    }, 1400);
+  } else {
+    b.classList.add("bad");
+    [...$("opts").children].forEach(x => { if (x.dataset.v === item.a) x.classList.add("ok"); });
+    $("msg").textContent = "إجابة خاطئة. الإجابة الصحيحة موضحة باللون الأخضر";
+    beep(300, 180, "sawtooth");
+    setTimeout(() => endGame(false), 2200);
+  }
+}
+
+$("h5050").onclick = () => {
+  if (locked) return;
+  $("h5050").disabled = true;
+  const item = pool[cur];
+  const wrongs = [...$("opts").children].filter(x => x.dataset.v !== item.a);
+  shuffle(wrongs).slice(0, 2).forEach(x => x.classList.add("hide"));
+};
+
+$("hchange").onclick = () => {
+  if (locked || !spare.length) return;
+  $("hchange").disabled = true;
+  pool[cur] = spare.shift();
+  render();
+};
+
+$("haud").onclick = () => {
+  if (locked) return;
+  $("haud").disabled = true;
+  const item = pool[cur];
+  const opts = [...$("opts").children].map(x => x.dataset.v);
+  const ci = opts.indexOf(item.a);
+  const cp = 50 + Math.floor(Math.random() * 31);
+  let rest = 100 - cp;
+  const others = opts.map((_, i) => i).filter(i => i !== ci);
+  const vals = {};
+  vals[ci] = cp;
+  others.forEach((i, k) => {
+    if (k === others.length - 1) vals[i] = rest;
+    else { const v = Math.floor(Math.random() * (rest + 1)); vals[i] = v; rest -= v; }
+  });
+  const letters = ["أ","ب","ج","د"];
+  let html = "";
+  opts.forEach((_, i) => {
+    html += `<div class="bar"><span class="lab">${letters[i]}</span><div class="track"><div class="fill" style="width:${vals[i]}%"></div></div><span class="pct">${toAr(vals[i])}٪</span></div>`;
+  });
+  $("aud").innerHTML = "<strong>توزيع أصوات الجمهور</strong>" + html;
+  $("aud").style.display = "block";
+};
+
+function speakText(){
+  if (!("speechSynthesis" in window)) { $("spk").textContent = "القراءة الصوتية غير مدعومة في هذا المتصفح"; return; }
+  if (speechSynthesis.speaking) return;
+  const item = pool[cur];
+  const opts = [...$("opts").children].filter(x => !x.classList.contains("hide")).map(x => x.dataset.v);
+  const text = plain(item.q) + ". " + opts.map((t, i) => "الخيار " + ["أ","ب","ج","د"][i] + ": " + plain(t)).join(". ");
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "ar-SA";
+  u.onstart = () => { speaking = true; $("spk").textContent = "الصوت قيد التشغيل..."; };
+  u.onend = u.onerror = () => { speaking = false; $("spk").textContent = ""; };
+  speechSynthesis.speak(u);
+}
+function stopSpeech(){
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  speaking = false; $("spk").textContent = "";
+}
+$("readBtn").onclick = speakText;
+$("stopBtn").onclick = stopSpeech;
+
+function tier(n){
+  if (n <= 5) return "مستوى المبتدئ";
+  if (n <= 10) return "مستوى المتقدم";
+  return "مستوى الخبير";
+}
+
+function endGame(won){
+  stopSpeech();
+  correctCount = won ? 15 : cur;
+  const name = $("name").value.trim();
+  const date = toAr(new Date().toLocaleDateString("ar-PS", {year:"numeric", month:"long", day:"numeric"}));
+  $("res").innerHTML = won
+    ? "أحسنت! أجبت عن جميع الأسئلة إجابة صحيحة"
+    : "النتيجة: " + toAr(correctCount) + " من ١٥";
+  $("cName").textContent = name;
+  $("cScore").textContent = toAr(correctCount) + " من ١٥";
+  $("cLevel").textContent = toAr(correctCount) + " (" + tier(correctCount) + ")";
+  $("cDate").textContent = date;
+  show("end");
+}
+
+$("printBtn").onclick = () => window.print();
+
+$("saveBtn").onclick = () => {
+  const c = document.createElement("canvas");
+  c.width = 1200; c.height = 800;
+  const x = c.getContext("2d");
+  x.fillStyle = "#fffdf5"; x.fillRect(0, 0, 1200, 800);
+  x.strokeStyle = "#C9A227"; x.lineWidth = 16; x.strokeRect(30, 30, 1140, 740);
+  x.textAlign = "center"; x.direction = "rtl"; x.fillStyle = "#1F3864";
+  x.font = "bold 86px Tahoma, Arial"; x.fillText("بطل المعرفة", 600, 200);
+  x.font = "bold 64px Tahoma, Arial"; x.fillText($("cName").textContent, 600, 340);
+  x.fillStyle = "#1b2233"; x.font = "36px Tahoma, Arial";
+  x.fillText("النتيجة: " + $("cScore").textContent, 600, 430);
+  x.fillText("المستوى: " + $("cLevel").textContent, 600, 490);
+  x.fillText("المعلم/ة: آمال كمال", 600, 580);
+  x.fillText("المدرسة: بنات بيت سيرا الثانوية", 600, 635);
+  x.fillText("التاريخ: " + $("cDate").textContent, 600, 690);
+  c.toBlob(b => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(b); a.download = "بطل-المعرفة.png";
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+};
+
+$("againBtn").onclick = () => { $("name").value = ""; $("hdr").classList.remove("small"); $("pname").textContent = ""; show("start"); };
+</script>
+</body>
+</html>
